@@ -5,11 +5,13 @@ import { describe, it, expect } from 'vitest';
 import JsSandbox from '../index';
 import { prepCustomFunctions, prepMainFunction } from './sellercloud/infra';
 
+import { HackContext } from './sellercloud/types';
+
 import { rackLevel, numericOnly } from './sellercloud/utils';
 import { primitivesOnlyValidator } from './sellercloud/validators';
 
 // e.g. a Rack 2 levels high, 5 columns wide
-const NAMING_CONVENTION_CONTEXT = {
+const NAMING_CONVENTION_CONTEXT: HackContext = {
   rack: {
     levels: 2,
     columns: 5,

@@ -1,4 +1,4 @@
-type HackContext = {}; // Dummy
+import { HackContext } from '../types';
 
 export const stringify =
   (context: HackContext) =>
