@@ -7,8 +7,8 @@ import { prepCustomFunctions, prepMainFunction } from './sellercloud/infra';
 
 import { HackContext } from './sellercloud/types';
 
-import { rackLevel, numericOnly } from './sellercloud/utils';
-import { primitivesOnlyValidator } from './sellercloud/validators';
+import { WHITELIST_ALL_UTILS } from './sellercloud/utils';
+import { WHITELIST_ALL_VALIDATORS } from './sellercloud/validators';
 
 // e.g. a Rack 2 levels high, 5 columns wide
 const NAMING_CONVENTION_CONTEXT: HackContext = {
@@ -42,22 +42,15 @@ describe('javascript tagged template literal', () => {
     const context = NAMING_CONVENTION_CONTEXT;
     const input = BIN_NAME_WITH_POSITION_12;
 
+    // Wrap our pieces of contexts & allowed functions into the JsSandbox concepts
     const option = { context, input };
 
-    const utils = {
-      rackLevel,
-      numericOnly,
-    };
-
-    const validators = {
-      primitivesOnlyValidator,
-    };
-
     const funcs = {
-      ...utils,
-      ...validators,
+      ...WHITELIST_ALL_UTILS,
+      ...WHITELIST_ALL_VALIDATORS,
     };
 
+    // Convert our allowed functions into JsSandbox `CustomFunction` function definitions
     const mainFunction = prepMainFunction(code);
     const customFunctions = prepCustomFunctions(funcs, mainFunction);
 
