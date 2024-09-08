@@ -3,18 +3,10 @@
 import { describe, it, expect } from 'vitest';
 
 import JsSandbox, { CustomFunction } from '../index';
+import { prepCustomFunctions } from './sellercloud/infra';
 
 import { rackLevel } from './sellercloud/utils';
 import { primitivesOnlyValidator } from './sellercloud/validators';
-
-const prepCustomFunctions = (funcs: Record<string, Function>, mainFunction: CustomFunction) => {
-  const whitelistedFunctions: CustomFunction[] = Object.entries(funcs).map<CustomFunction>(([name, func]) => ({
-    functionName: name,
-    arrowSandboxFunctionStr: func.toString(),
-  }));
-
-  return [...whitelistedFunctions, mainFunction];
-};
 
 describe('javascript tagged template literal', () => {
   it('should be ok', async () => {
