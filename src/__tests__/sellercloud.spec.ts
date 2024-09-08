@@ -9,9 +9,7 @@ import { rackLevel } from './sellercloud/utils';
 import { primitivesOnlyValidator } from './sellercloud/validators';
 
 describe('javascript tagged template literal', () => {
-  it('should be ok', async () => {
-    const fun = ``;
-
+  it('should be executed ok', async () => {
     const tag = `primitivesOnlyValidator`;
     const partial = `(context)(input)`;
     const expression = '`${rackLevel}`';
@@ -40,11 +38,6 @@ describe('javascript tagged template literal', () => {
 
     const customFunctions = prepCustomFunctions(funcs, mainFunction);
 
-    // console.log(customFunctions[1].arrowGlobalFunction);
-    // console.log(customFunctions[1].arrowGlobalFunction.toString());
-    // console.log(customFunctions[2].functionName);
-    // console.log(customFunctions[2].arrowSandboxFunctionStr);
-
     const expected = 'abcd';
 
     // Set a prop at the global level of the CALLER context
@@ -56,7 +49,9 @@ describe('javascript tagged template literal', () => {
       customFunctions,
     });
 
+    const fun = ``;
     const result = await jsSandbox.runCodeSafe(fun, option);
+
     console.log('---- result');
     console.log(result);
     expect(result).toEqual(expected);
