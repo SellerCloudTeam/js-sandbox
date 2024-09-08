@@ -77,15 +77,25 @@ describe('javascript tagged template literal', () => {
 
     const code = `${tag}${partial}${expression}`;
 
-    // Prepare the main function as a JsSandbox `CustomFunction` function definition
+    // Wrap our pieces of context & input + allowed functions into the JsSandbox concepts
+    const option = {};
+
+    const funcs = {
+      ...WHITELIST_ALL_UTILS,
+      ...WHITELIST_ALL_VALIDATORS,
+    };
+
+    // Convert our allowed functions into JsSandbox `CustomFunction` function definitions
     const mainFunction = prepMainFunction(code);
+    const customFunctions = prepCustomFunctions(funcs, mainFunction);
 
     const jsSandbox = new JsSandbox({
       entry: mainFunction.functionName,
+      customFunctions,
     });
 
     const fun = ``;
-    const promise = jsSandbox.runCodeSafe(fun, {});
+    const promise = jsSandbox.runCodeSafe(fun, option);
 
     await expect(promise).rejects.toThrowError();
   });
@@ -97,15 +107,25 @@ describe('javascript tagged template literal', () => {
 
     const code = `${tag}${partial}${expression}`;
 
-    // Prepare the main function as a JsSandbox `CustomFunction` function definition
+    // Wrap our pieces of context & input + allowed functions into the JsSandbox concepts
+    const option = {};
+
+    const funcs = {
+      ...WHITELIST_ALL_UTILS,
+      ...WHITELIST_ALL_VALIDATORS,
+    };
+
+    // Convert our allowed functions into JsSandbox `CustomFunction` function definitions
     const mainFunction = prepMainFunction(code);
+    const customFunctions = prepCustomFunctions(funcs, mainFunction);
 
     const jsSandbox = new JsSandbox({
       entry: mainFunction.functionName,
+      customFunctions,
     });
 
     const fun = ``;
-    const promise = jsSandbox.runCodeSafe(fun, {});
+    const promise = jsSandbox.runCodeSafe(fun, option);
 
     await expect(promise).rejects.toThrowError();
   });
@@ -117,15 +137,59 @@ describe('javascript tagged template literal', () => {
 
     const code = `${tag}${partial}${expression}`;
 
-    // Prepare the main function as a JsSandbox `CustomFunction` function definition
+    // Our pieces of context & input
+    const context = NAMING_CONVENTION_CONTEXT;
+    const input = BIN_NAME_WITH_POSITION_12;
+
+    // Wrap our pieces of context & input + allowed functions into the JsSandbox concepts
+    const option = { context, input };
+
+    const funcs = {
+      ...WHITELIST_ALL_UTILS,
+      ...WHITELIST_ALL_VALIDATORS,
+    };
+
+    // Convert our allowed functions into JsSandbox `CustomFunction` function definitions
     const mainFunction = prepMainFunction(code);
+    const customFunctions = prepCustomFunctions(funcs, mainFunction);
 
     const jsSandbox = new JsSandbox({
       entry: mainFunction.functionName,
+      customFunctions,
     });
 
     const fun = ``;
-    const promise = jsSandbox.runCodeSafe(fun, {});
+    const promise = jsSandbox.runCodeSafe(fun, option);
+
+    await expect(promise).rejects.toThrowError();
+  });
+
+  it('should not allow inline functions', async () => {
+    const tag = `primitivesOnlyValidator`;
+    const partial = `(context)(input)`;
+    const expression = '`${(function abc() { return "abc-output"; })}`';
+
+    const code = `${tag}${partial}${expression}`;
+
+    // Wrap our pieces of context & input + allowed functions into the JsSandbox concepts
+    const option = {};
+
+    const funcs = {
+      ...WHITELIST_ALL_UTILS,
+      ...WHITELIST_ALL_VALIDATORS,
+    };
+
+    // Convert our allowed functions into JsSandbox `CustomFunction` function definitions
+    const mainFunction = prepMainFunction(code);
+    const customFunctions = prepCustomFunctions(funcs, mainFunction);
+
+    const jsSandbox = new JsSandbox({
+      entry: mainFunction.functionName,
+      customFunctions,
+    });
+
+    const fun = ``;
+    const promise = jsSandbox.runCodeSafe(fun, option);
 
     await expect(promise).rejects.toThrowError();
   });
