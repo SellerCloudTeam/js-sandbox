@@ -70,4 +70,24 @@ describe('javascript tagged template literal', () => {
     console.log(result);
     expect(result).toEqual(expected);
   });
+
+  it('should not allow fetch', async () => {
+    const tag = `primitivesOnlyValidator`;
+    const partial = `(context)(input)`;
+    const expression = '`${fetch("http://google.com")}`';
+
+    const code = `${tag}${partial}${expression}`;
+
+    // Prepare the main function as a JsSandbox `CustomFunction` function definition
+    const mainFunction = prepMainFunction(code);
+
+    const jsSandbox = new JsSandbox({
+      entry: mainFunction.functionName,
+    });
+
+    const fun = ``;
+    const promise = jsSandbox.runCodeSafe(fun, {});
+
+    await expect(promise).rejects.toThrowError();
+  });
 });
