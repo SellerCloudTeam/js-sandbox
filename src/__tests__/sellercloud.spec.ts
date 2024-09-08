@@ -35,14 +35,15 @@ describe('javascript tagged template literal', () => {
 
     // const code = `input`;
 
+    // Our pieces of context & input
+    const context = NAMING_CONVENTION_CONTEXT;
+    const input = BIN_NAME_WITH_POSITION_12;
+
     // NOTE: Expectation should be stringified because
     //       The test expression to be evaluated is one of string interpolation
     const expected = `${BIN_POSITION_12_EXPECTED}`;
 
-    const context = NAMING_CONVENTION_CONTEXT;
-    const input = BIN_NAME_WITH_POSITION_12;
-
-    // Wrap our pieces of contexts & allowed functions into the JsSandbox concepts
+    // Wrap our pieces of context & input + allowed functions into the JsSandbox concepts
     const option = { context, input };
 
     const funcs = {
@@ -66,8 +67,6 @@ describe('javascript tagged template literal', () => {
     const fun = ``;
     const result = await jsSandbox.runCodeSafe(fun, option);
 
-    console.log('---- result');
-    console.log(result);
     expect(result).toEqual(expected);
   });
 
@@ -89,5 +88,82 @@ describe('javascript tagged template literal', () => {
     const promise = jsSandbox.runCodeSafe(fun, {});
 
     await expect(promise).rejects.toThrowError();
+  });
+
+  it('should not allow inline objects', async () => {
+    const tag = `primitivesOnlyValidator`;
+    const partial = `(context)(input)`;
+    const expression = '`${{ value: 123 }}`';
+
+    const code = `${tag}${partial}${expression}`;
+
+    // Prepare the main function as a JsSandbox `CustomFunction` function definition
+    const mainFunction = prepMainFunction(code);
+
+    const jsSandbox = new JsSandbox({
+      entry: mainFunction.functionName,
+    });
+
+    const fun = ``;
+    const promise = jsSandbox.runCodeSafe(fun, {});
+
+    await expect(promise).rejects.toThrowError();
+  });
+
+  it('should not allow referenced objects', async () => {
+    const tag = `primitivesOnlyValidator`;
+    const partial = `(context)(input)`;
+    const expression = '`${context}`';
+
+    const code = `${tag}${partial}${expression}`;
+
+    // Prepare the main function as a JsSandbox `CustomFunction` function definition
+    const mainFunction = prepMainFunction(code);
+
+    const jsSandbox = new JsSandbox({
+      entry: mainFunction.functionName,
+    });
+
+    const fun = ``;
+    const promise = jsSandbox.runCodeSafe(fun, {});
+
+    await expect(promise).rejects.toThrowError();
+  });
+
+  it('should allow referenced primitives', async () => {
+    const tag = `primitivesOnlyValidator`;
+    const partial = `(context)(input)`;
+    const expression = '`${context.rack.levels}`';
+
+    const code = `${tag}${partial}${expression}`;
+
+    const context = NAMING_CONVENTION_CONTEXT;
+    const input = BIN_NAME_WITH_POSITION_12;
+
+    // NOTE: Expectation should be stringified because
+    //       The test expression to be evaluated is one of string interpolation
+    const expected = `${context.rack.levels}`;
+
+    // Wrap our pieces of context & input + allowed functions into the JsSandbox concepts
+    const option = { context, input };
+
+    const funcs = {
+      ...WHITELIST_ALL_UTILS,
+      ...WHITELIST_ALL_VALIDATORS,
+    };
+
+    // Convert our allowed functions into JsSandbox `CustomFunction` function definitions
+    const mainFunction = prepMainFunction(code);
+    const customFunctions = prepCustomFunctions(funcs, mainFunction);
+
+    const jsSandbox = new JsSandbox({
+      entry: mainFunction.functionName,
+      customFunctions,
+    });
+
+    const fun = ``;
+    const result = await jsSandbox.runCodeSafe(fun, option);
+
+    expect(result).toEqual(expected);
   });
 });
