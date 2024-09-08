@@ -2,17 +2,29 @@
 
 import { describe, it, expect } from 'vitest';
 
-import JsSandbox, { CustomFunction } from '../index';
-import { prepCustomFunctions } from './sellercloud/infra';
+import JsSandbox from '../index';
+import { prepCustomFunctions, prepMainFunction } from './sellercloud/infra';
 
-import { rackLevel } from './sellercloud/utils';
+import { rackLevel, numericOnly } from './sellercloud/utils';
 import { primitivesOnlyValidator } from './sellercloud/validators';
+
+// e.g. a Rack 2 levels high, 5 columns wide
+const NAMING_CONVENTION_CONTEXT = {
+  rack: {
+    levels: 2,
+    columns: 5,
+  },
+};
+
+// e.g. Bin # 12 on a shelf
+const BIN_NAME_WITH_POSITION_12 = 'P012';
+const BIN_POSITION_12_EXPECTED = 12;
 
 describe('javascript tagged template literal', () => {
   it('should be executed ok', async () => {
     const tag = `primitivesOnlyValidator`;
     const partial = `(context)(input)`;
-    const expression = '`${rackLevel}`';
+    const expression = '`${numericOnly}`';
     // const expression = '`${{}}}`';
     // const expression = '`abcd`';
 
@@ -21,24 +33,29 @@ describe('javascript tagged template literal', () => {
 
     // const code = `input`;
 
-    const context = { rack: { levels: 2, columns: 5 } };
-    const input = 'input-text';
+    const expected = BIN_POSITION_12_EXPECTED;
+
+    const context = NAMING_CONVENTION_CONTEXT;
+    const input = BIN_NAME_WITH_POSITION_12;
 
     const option = { context, input };
 
-    const funcs = {
+    const utils = {
       rackLevel,
+      numericOnly,
+    };
+
+    const validators = {
       primitivesOnlyValidator,
     };
 
-    const mainFunction: CustomFunction = {
-      functionName: 'main',
-      arrowSandboxFunctionStr: `({ context, input }) => ${code}`,
+    const funcs = {
+      ...utils,
+      ...validators,
     };
 
+    const mainFunction = prepMainFunction(code);
     const customFunctions = prepCustomFunctions(funcs, mainFunction);
-
-    const expected = 'abcd';
 
     // Set a prop at the global level of the CALLER context
     // TODO: Try to read this from the SANDBOX?
