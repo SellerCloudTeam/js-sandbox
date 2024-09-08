@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joehecn/js-sandbox.git"
+    "url": "git+https://github.com/SellerCloudTeam/js-sandbox.git"
   },
   "keywords": [
     "javascript",
@@ -28,9 +28,9 @@
   "author": "leanbrown@live.cn",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/joehecn/js-sandbox/issues"
+    "url": "https://github.com/SellerCloudTeam/js-sandbox/issues"
   },
-  "homepage": "https://github.com/joehecn/js-sandbox#readme",
+  "homepage": "https://github.com/SellerCloudTeam/js-sandbox#readme",
   "files": [
     "lib/**/*"
   ],
