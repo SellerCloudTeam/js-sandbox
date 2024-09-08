@@ -130,6 +130,38 @@ describe('javascript tagged template literal', () => {
     await expect(promise).rejects.toThrowError();
   });
 
+  it('should allow inline primitives', async () => {
+    const tag = `primitivesOnlyValidator`;
+    const partial = `(context)(input)`;
+    const expression = '`${"sample-inline-primitive"}`';
+
+    const code = `${tag}${partial}${expression}`;
+
+    const expected = `sample-inline-primitive`;
+
+    // Wrap our pieces of context & input + allowed functions into the JsSandbox concepts
+    const option = {};
+
+    const funcs = {
+      ...WHITELIST_ALL_UTILS,
+      ...WHITELIST_ALL_VALIDATORS,
+    };
+
+    // Convert our allowed functions into JsSandbox `CustomFunction` function definitions
+    const mainFunction = prepMainFunction(code);
+    const customFunctions = prepCustomFunctions(funcs, mainFunction);
+
+    const jsSandbox = new JsSandbox({
+      entry: mainFunction.functionName,
+      customFunctions,
+    });
+
+    const fun = ``;
+    const result = await jsSandbox.runCodeSafe(fun, option);
+
+    expect(result).toEqual(expected);
+  });
+
   it('should allow referenced primitives', async () => {
     const tag = `primitivesOnlyValidator`;
     const partial = `(context)(input)`;
