@@ -33,7 +33,9 @@ describe('javascript tagged template literal', () => {
 
     // const code = `input`;
 
-    const expected = BIN_POSITION_12_EXPECTED;
+    // NOTE: Expectation should be stringified because
+    //       The test expression to be evaluated is one of string interpolation
+    const expected = `${BIN_POSITION_12_EXPECTED}`;
 
     const context = NAMING_CONVENTION_CONTEXT;
     const input = BIN_NAME_WITH_POSITION_12;
