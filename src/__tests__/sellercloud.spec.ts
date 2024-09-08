@@ -23,7 +23,10 @@ describe('javascript tagged template literal', () => {
 
     // const code = `input`;
 
-    const option = { context: { rack: { levels: 2, columns: 5 } }, input: 'input-text' };
+    const context = { rack: { levels: 2, columns: 5 } };
+    const input = 'input-text';
+
+    const option = { context, input };
 
     const funcs = {
       rackLevel,
